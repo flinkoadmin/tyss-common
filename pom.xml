@@ -8,9 +8,16 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>io.github.flinkoadmin</groupId>
-    
     <artifactId>tyss-common</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <spring.data.mongodb.version>3.1.6</spring.data.mongodb.version>
+
+    </properties>
 
 <distributionManagement>
     <snapshotRepository>
@@ -49,17 +56,11 @@
   
   
       <scm>
-         <connection>scm:git:git://github.com/flinkoadmin/tyss-common.git</connection>        
+        <connection>scm:git:git://github.com/flinkoadmin/tyss-common.git</connection>
         <developerConnection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</developerConnection>
         <url>http://github.com/flinkoadmin/tyss-common/tree/main</url>
     </scm>
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <spring.data.mongodb.version>3.1.6</spring.data.mongodb.version>
-
-    </properties>
+  
 
     <dependencies>
         <dependency>
@@ -144,6 +145,7 @@
         </dependency>
 
     </dependencies>
+
 <build>
     <pluginManagement>
       <plugins>
@@ -195,10 +197,11 @@
             <goals>
                 <goal>sign</goal>
             </goals>
-</execution>
-</executions>
+        </execution>
+    </executions>
 </plugin>
 </plugins>
 </pluginManagement>      
 </build>
+
 </project>

@@ -207,13 +207,16 @@
     </executions>
 </plugin>
 <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>3.0.0-M6</version>
-        <configuration>
-          <tagNameFormat>v@{0.1.0-SNAPSHOT}</tagNameFormat>
-        </configuration>
-      </plugin>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-release-plugin</artifactId>
+     <version>2.5.3</version>
+     <configuration>
+     <tagNameFormat>@{0.1.0-SNAPSHOT}</tagNameFormat>
+     <checkModificationExcludes>
+     <checkModificationExclude>pom.xml</checkModificationExclude>
+     </checkModificationExcludes>
+     </configuration>
+</plugin>
 </plugins>
 </pluginManagement>      
 </build>

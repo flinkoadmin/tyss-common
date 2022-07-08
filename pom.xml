@@ -49,8 +49,9 @@
   
   
       <scm>
-       <Connection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</Connection>
-        
+         <connection>scm:git:git://github.com/flinkoadmin/tyss-common.git</connection>        
+        <developerConnection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</developerConnection>
+        <url>http://github.com/flinkoadmin/tyss-common/tree/main</url>
     </scm>
 
     <properties>
@@ -193,20 +194,9 @@
             <phase>verify</phase>
             <goals>
                 <goal>sign</goal>
-            </go
- <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.2</version>
-        <configuration>
-          ...
-          <tagBase>
-            file:///C:\Users\Shashank R\.m2\repository
-          </tagBase>
-          ...
-        </configuration>
-      </plugin>als>
-        </execution>
-    </executions>
+            </goals>
+</execution>
+</executions>
 </plugin>
 </plugins>
 </pluginManagement>      

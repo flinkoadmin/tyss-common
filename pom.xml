@@ -49,7 +49,7 @@
   
   
       <scm>
-       <Connection>scm:git:ssh://github.com/flinkoadmin/tyss-nlp.git</Connection>
+       <Connection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</Connection>
         
     </scm>
 

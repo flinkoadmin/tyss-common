@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.flinkoadmin</groupId>
-    <groupId>org.tyss.optimize</groupId>
+    
     <artifactId>tyss-common</artifactId>
 
 <distributionManagement>

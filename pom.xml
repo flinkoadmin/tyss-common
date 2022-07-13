@@ -211,7 +211,7 @@
      <artifactId>maven-release-plugin</artifactId>
      <version>2.5.3</version>
      <configuration>
-     <tagNameFormat>@{0.1.0-SNAPSHOT}</tagNameFormat>
+     <tagNameFormat>@{1.0-SNAPSHOT}</tagNameFormat>
      <checkModificationExcludes>
      <checkModificationExclude>pom.xml</checkModificationExclude>
      </checkModificationExcludes>

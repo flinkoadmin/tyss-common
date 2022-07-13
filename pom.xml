@@ -60,7 +60,7 @@
         <developerConnection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</developerConnection>
         <url>http://github.com/flinkoadmin/tyss-common/tree/main</url>
     </scm>
-
+  
 
     <dependencies>
         <dependency>
@@ -145,7 +145,6 @@
         </dependency>
 
     </dependencies>
-
 <build>
     <pluginManagement>
       <plugins>
@@ -214,5 +213,6 @@
 </plugins>
 </pluginManagement>      
 </build>
+
 
 </project>

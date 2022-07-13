@@ -5,6 +5,7 @@ import java.util.*;
 public class CommonConstants {
 
     public static final Float DEFAULT_VERSION = 1.0f;
+    public static final Float NEW_VERSION = 0.0f;
     public static final String ANONYMOUS_USER = "USR1";
     public static final String MAX_TWO_SUPER_ADMINS_MESSAGE = "More than 2 super admins are not allowed per license";
     public static final String PROJECT_TYPES = "project.types";
@@ -14,8 +15,15 @@ public class CommonConstants {
     public static final String STEP_GROUP = "STEP_GROUP";
     public static final String SCRIPTS = "scripts";
     public static final String UPDATE_TAG = "UPDATE";
+    public static final String CREATE_TAG = "CREATE";
     public static final String DELETE_TAG = "DELETE";
+    public static final String RESOLVE_TAG = "RESOLVE";
     public static final String None = "None";
+    public static final String DFC = "DFC";
+    public static final String STATE_COMMIT = "COMMIT";
+    public static final String STATE_PUBLISH = "PUBLISH";
+    public static final String STATE_RB = "ROLLBACK";
+    public static final String STATE_REMOVE = "DELETE";
 
     public static String Hello = "Hello";
     public static final String EMPTY = "";
@@ -87,8 +95,15 @@ public class CommonConstants {
         sequenceMap.put("JIRA", "JIRA");
         sequenceMap.put("LAMBDATEST", "LAMBDA");
         sequenceMap.put("TAGDETAIL", "TAG");
+        sequenceMap.put("DEFAULT_CONFIGURATIONS", "DCONF");
         sequenceMap.put("STORAGE_DETAIL", "STRC");
         sequenceMap.put("STORAGE_SNAPSHOT", "SNAP");
+        sequenceMap.put("SCRIPT_TEMPLATE", "TEMP");
+        sequenceMap.put("SLACK", "SLACK");
+        sequenceMap.put("GITLAB", "GITLAB");
+        sequenceMap.put("GITHUB", "GITHUB");
+        sequenceMap.put("DEFECT_TEMPLATE", "DEFTEMP");
+
         return Collections.unmodifiableMap(sequenceMap);
     }
 
@@ -108,7 +123,7 @@ public class CommonConstants {
     public static final String DEFAULT_EXECUTE_ACCESS_ID = "ROLE1002";
     public static final String INACTIVE_USER = "User is not activated";
     public static final String IS_SECOND_SUPER_ADMIN = "isSecondSuperAdmin";
-    public static final String INVALID_USER = "Username or Password is invalid. Please try again";
+    public static final String INVALID_USER = "EmailId or Password is invalid. Please try again";
     public static final String STATIC = "static";
     public static final String DYNAMIC = "dynamic";
     public static final String STATE_NEW = "NEW";
@@ -164,6 +179,7 @@ public class CommonConstants {
     public static final String DEFAULT_HISTORY_CONFIG = "HIS_CFG1000";
     public static final String DEFAULT_DATE_TIME_CONFIG = "DATE_TIME_CFG1000";
     public static final String DEFAULT_MEMORY_CONFIG_ID = "MEM_CFG1000";
+    public static final String DEFAULT_CONFIGURATIONS_ID = "DF_CONFS1000";
 
     public static final Integer FILENAME_MAX = 25;
     public static final Integer FILENAME_MIN = 2;
@@ -180,15 +196,17 @@ public class CommonConstants {
 
     public static final Double TOTAL_MEMORY = 10.0;
     public static final String TOTAL_MEMORY_UNIT = "GB";
+    public static final String DEFAULT_MEMORY_UNIT = "MB";
     public static final Double USED_MEMORY = 0.0;
     public static final String USED_MEMORY_UNIT = "GB";
     public static final Double AVAILABLE_MEMORY = 10.0;
+    public static final Double DEFAULT_PROJECT_MEMORY = 200.0;
     public static final String AVAILABLE_MEMORY_UNIT = "GB";
     public static final Integer PROJECT_COUNT_MIN = 0;
 
     public static final String DEFAULT_DATE_FORMAT = "dd-mm-yyyy";
     public static final String DEFAULT_DATE_SEPARATOR = "-";
-    public static final String DEFAULT_TIME_FORMAT = "hh-mm-ss-ms";
+    public static final String DEFAULT_TIME_FORMAT = "hh-mm-ss";
     public static final String DEFAULT_TIME_ZONE = "(UTC+05:30) Chennai,Kolkata,Mumbai,New Delhi";
 
     public static final String DEFAULT_VIEW_NAME = "Default_View";
@@ -196,12 +214,12 @@ public class CommonConstants {
 
     public static final Integer COMPONENTS_RESULT_MIN = 200;
 
-    public static final Double EXPLICIT_WAIT = 20000.0;
-    public static final String EXPLICIT_WAIT_UNIT = "milliseconds";
-    public static final Double IMPLICIT_WAIT = 20000.0;
-    public static final String IMPLICIT_WAIT_UNIT = "milliseconds";
+    public static final Double EXPLICIT_WAIT = 20.0;
+    public static final String EXPLICIT_WAIT_UNIT = "seconds";
+    public static final Double IMPLICIT_WAIT = 20.0;
+    public static final String IMPLICIT_WAIT_UNIT = "seconds";
     public static final Double DELAY_BETWEEN_STEPS = 0.0;
-    public static final String DELAY_BETWEEN_STEPS_UNIT = "milliseconds";
+    public static final String DELAY_BETWEEN_STEPS_UNIT = "seconds";
 
     public static final Integer RD_ELEMENT_NAME_MAX = 100;
     public static final Integer RD_ELEMENT_NAME_MIN = 2;
@@ -220,9 +238,6 @@ public class CommonConstants {
     public static final List<String> timeInHoursUnit = Arrays.asList("Hours", "Hrs.");
     public static final List<String> timeInMinutesUnit = Arrays.asList("Minutes", "Mins.");
     public static final List<String> envToValidate = Arrays.asList("Localhost", "Local", "localhost", "local");
-    public static final List<String> browserStackCapabilityKeys = Arrays.asList("os:osName", "os_version:osVersion", "platform:platform", "browser_version:version", "browserstack_local:false");
-    public static final List<String> saucelabCapabilityKeys = Arrays.asList("os_name:osName", "os_version:osVersion", "platform:platform", "version:version");
-    public static final List<String> LambdaTestCapabilityKeys = Arrays.asList("platform:platform", "version:version");
 
     //Execution Client related Constants
     public static String API = "/optimize";
@@ -242,11 +257,11 @@ public class CommonConstants {
     public static String busy = "Busy";
     public static String available = "Available";
     public static String aborted = "Aborted";
-    public static String pass = "PASS";
-    public static String fail = "FAIL";
-    public static String skip = "SKIP";
+    public static final String pass = "PASS";
+    public static final String fail = "FAIL";
+    public static final String skip = "SKIP";
     public static final String NA = "N/A";
-    public static String warning = "WARNING";
+    public static final String warning = "WARNING";
     public static String preCondition = "preCondition";
     public static String postCondition = "postCondition";
     public static String executionEntityResponses = "executionEntityResponses";
@@ -290,6 +305,7 @@ public class CommonConstants {
     public static final String typeFloat = "java.lang.Float";
     public static final String typeDouble = "java.lang.Double";
     public static final String typeString = "java.lang.String";
+    public static final String typeListOfString = "List<String>";
     public static final String typeJSONObject = "org.json.simple.JSONObject";
     public static String responseToServer = "Execution request is received and being processed";
     public static final String ifConditionNlpName = "IfCondition";
@@ -322,6 +338,7 @@ public class CommonConstants {
     public static String resultSyncPort = "resultSyncPort";
     public static String RESOURCE_NAME = "/optimize/v1/executions/result";
     public static String dashboardResourceName = "/optimize/v1/dashboard/execution";
+    public static String dashboardStorageResourceName = "/optimize/v1/project/dashboard/storage/";
     public static String dashboardHost = "localhost";
     public static String dashboardPort = "8109";
 
@@ -396,14 +413,7 @@ public class CommonConstants {
     public static String programElement = "programElement";
     public static String ADMIN = "ADMIN";
     public static String programElementJar = "tyss-programelements.jar";
-    public static final String browserStack = "browserstack";
-    public static final String saucelabs = "saucelabs";
-    public static final String lambdaTest = "lambdatest";
-    public static String browserStackSuffix = "@hub-cloud.browserstack.com/wd/hub";
-    public static String saucelabsSuffix = "@ondemand.{region}.saucelabs.com:443/wd/hub";
-    public static final String lambdaTestSuffix = "@hub.lambdatest.com/wd/hub";
     public static String hubUrlPrefix = "https://";
-    public static String localHubUrl = "http://localhost:4444/wd/hub";
     public static String osName = "Windows";
     public static String parallel = "Parallel";
     public static String sequential = "Sequential";
@@ -431,4 +441,7 @@ public class CommonConstants {
     public static String PROD_HOST_NAME="app.flinko.com";
     public static  String HTTP="http";
     public static String HTTPS="https";
+    public static String manual = "Manual";
+    public static String automation = "Automation";
+    public static String automation_and_manual = "Automation and Manual";
 }

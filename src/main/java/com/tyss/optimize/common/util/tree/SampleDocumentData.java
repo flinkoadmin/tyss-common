@@ -49,7 +49,7 @@ public class SampleDocumentData {
 
       //  buildFancyTree(documentList, "elements");
 
-       String fancyTreeJson = FancyTreeUtil.buildFancyTree(documentList, "page4", "elements", false);
+       String fancyTreeJson = FancyTreeUtil.buildFancyTree(documentList, "page4", "elements", false, null);
         Instant finish = Instant.now();
 
         long timeElapsed = Duration.between(start, finish).toMillis();

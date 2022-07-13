@@ -6,18 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.util.CollectionUtils;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
 @Slf4j
 public class FancyTreeUtil {
 
-    public static String buildFancyTree(List<Document> documentList, String rootId, String key, boolean sort) {
+    public static String buildFancyTree(List<Document> documentList, String rootId, String key, boolean sort, String testCaseType) {
 
         StringBuilder fancyTreeBuilder = new StringBuilder();
 
         flattenTree(documentList, key);
-        if(sort) {
+        if (sort) {
 
             List<Document> scrList;
             scrList = documentList.stream().filter(document -> document.getString("_id").contains("SCR")).collect(Collectors.toList());
@@ -52,23 +54,22 @@ public class FancyTreeUtil {
 
             log.info("\n----------  After ---------- \n ");
 
-            documentList.stream().forEach(d -> log.info(d.getString("_id") + " = " + d.getString("parentId") + " = " + + d.getInteger("hierarchy") + " = " + d.getDouble("executionOrder") + " = " + d.getString("name")));
+            documentList.stream().forEach(d -> log.info(d.getString("_id") + " = " + d.getString("parentId") + " = " + +d.getInteger("hierarchy") + " = " + d.getDouble("executionOrder") + " = " + d.getString("name")));
 
             List<Document> reOrderedList = reOrderParent(documentList, rootId);
             log.info("\n ------------  reOrderedList ---------- \n");
-            reOrderedList.stream().forEach(d -> log.info(d.getString("_id") + " = " + d.getString("parentId") + " = " + + d.getInteger("hierarchy") + " = " + d.getDouble("executionOrder") + " = " + d.getString("name")));
+            reOrderedList.stream().forEach(d -> log.info(d.getString("_id") + " = " + d.getString("parentId") + " = " + +d.getInteger("hierarchy") + " = " + d.getDouble("executionOrder") + " = " + d.getString("name")));
             fancyTreeBuilder.append("[");
-            convertToFancyTree(fancyTreeBuilder, constructTree(reOrderedList, rootId));
-        }
-        else {
+            convertToFancyTree(fancyTreeBuilder, constructTree(reOrderedList, rootId, testCaseType));
+        } else {
             fancyTreeBuilder.append("[");
             convertToFancyTree(fancyTreeBuilder, constructFolderSortedTree(documentList, rootId, key));
         }
 
         fancyTreeBuilder.append("]");
         String treeJson = fancyTreeBuilder.toString().replace("_id", "key").
-         //       replace("\"name\"", "\"title\"").
-                replace("},children",", \"children\"")
+                //       replace("\"name\"", "\"title\"").
+                        replace("},children", ", \"children\"")
                 .replace(",]", "]");
         // treeJson = treeJson.replace("\"" , "'");
         return treeJson;
@@ -83,18 +84,17 @@ public class FancyTreeUtil {
 
         List<Document> keyDocumentList = new ArrayList();
 
-        documentList.forEach( (document) ->
+        documentList.forEach((document) ->
         {
             document.put("modifiedOn", CommonUtil.getFormattedDate(String.valueOf(document.get("modifiedOn"))));
             document.put("title", document.get("name"));
 
-            if(CommonConstants.SCRIPTS.equalsIgnoreCase(key) && CommonConstants.ROOT.equalsIgnoreCase( document.getString("name")))
-            {
+            if (CommonConstants.SCRIPTS.equalsIgnoreCase(key) && CommonConstants.ROOT.equalsIgnoreCase(document.getString("name"))) {
                 document.put("title", "Root Module");
                 document.put("name", "Root Module");
             }
 
-            if(Objects.nonNull(document.get("conditions"))) {
+            if (Objects.nonNull(document.get("conditions"))) {
 
                 List<Document> conditionsDocument = (List<Document>) document.get("conditions");
                 Document preConditionFolder = new Document();
@@ -112,7 +112,7 @@ public class FancyTreeUtil {
                 preConditionFolder.put("parentId", parentId);
                 preConditionFolder.put("parentName", parentName);
                 preConditionFolder.put("executionOrder", 0.0);
-                preConditionFolder.put("hierarchy", hierarchy+1);
+                preConditionFolder.put("hierarchy", hierarchy + 1);
                 preConditionFolder.put("name", "Preconditions");
                 preConditionFolder.put("type", "PRE");
 
@@ -123,7 +123,7 @@ public class FancyTreeUtil {
                 postConditionFolder.put("parentId", parentId);
                 postConditionFolder.put("parentName", parentName);
                 postConditionFolder.put("executionOrder", 9999.0);
-                postConditionFolder.put("hierarchy", hierarchy+1);
+                postConditionFolder.put("hierarchy", hierarchy + 1);
                 postConditionFolder.put("name", "Postconditions");
                 postConditionFolder.put("type", "POST");
 
@@ -157,12 +157,12 @@ public class FancyTreeUtil {
                     document.remove("conditions");
                 }
             }
-            if(Objects.nonNull(document.get(key))) {
+            if (Objects.nonNull(document.get(key))) {
                 List<Document> childDocs = (List<Document>) document.get(key);
                 childDocs.forEach((childDoc) ->
                 {
                     childDoc.put("modifiedOn", CommonUtil.getFormattedDate(String.valueOf(childDoc.get("modifiedOn"))));
-                    childDoc.put("parentId",document.get("_id"));
+                    childDoc.put("parentId", document.get("_id"));
                     childDoc.put("title", childDoc.get("name"));
                     keyDocumentList.add(childDoc);
                 });
@@ -175,22 +175,20 @@ public class FancyTreeUtil {
     }
 
 
-    private static void convertToFancyTree(StringBuilder fancyTreeBuilder, TreeNode<Document>  documentParent) {
-        int count =  documentParent.children.size();
+    private static void convertToFancyTree(StringBuilder fancyTreeBuilder, TreeNode<Document> documentParent) {
+        int count = documentParent.children.size();
 
-        for (int i = 0; i < count ; i++) {
+        for (int i = 0; i < count; i++) {
 
             TreeNode<Document> child = documentParent.children.get(i);
             fancyTreeBuilder.append(child.data.toJson()).append(",");
 
-            if(child.children.size() > 0)
-            {
+            if (child.children.size() > 0) {
                 fancyTreeBuilder.append("children: [ ");
                 convertToFancyTree(fancyTreeBuilder, child);
-                if(i == count - 1) {
+                if (i == count - 1) {
                     fancyTreeBuilder.append("] } ");
-                }else
-                {
+                } else {
                     fancyTreeBuilder.append("] }, ");
                 }
             }
@@ -250,10 +248,10 @@ public class FancyTreeUtil {
         reOrderedDocumentList.removeAll(pepostConList);
         reOrderedDocumentList.addAll(pepostConList);
 
-        Collections.sort(reOrderedDocumentList,new SortByExecutionOrder());
+        Collections.sort(reOrderedDocumentList, new SortByExecutionOrder());
 
         reOrderedDocumentList.stream().forEach(document -> {
-            if (Objects.nonNull(document.get("hierarchy")) && Objects.nonNull(document.get("executionOrder")) ) {
+            if (Objects.nonNull(document.get("hierarchy")) && Objects.nonNull(document.get("executionOrder"))) {
                 String execOrder = String.valueOf(document.get("executionOrder"));
                 if (execOrder.length() == 3) {
                     execOrder = 0 + execOrder;
@@ -266,18 +264,18 @@ public class FancyTreeUtil {
             }
         });
 
-        Collections.sort(reOrderedDocumentList,new SortByExecutionOrder());
+        Collections.sort(reOrderedDocumentList, new SortByExecutionOrder());
 
         reOrderedDocumentList.stream().forEach(document -> {
-                if (Objects.nonNull(document.get("hierarchy")) && Objects.nonNull(document.get("executionOrder")) && !document.getInteger("hierarchy").equals(0)) {
-                    String hierarchy = String.valueOf(document.get("hierarchy"));
-                    String execOrder = String.valueOf(document.get("executionOrder"));
-                    int h = hierarchy.length();
-                    int e = execOrder.length();
-                    String exOrder = execOrder.substring(h, e - 1);
-                    double initialExOrder = Double.parseDouble(exOrder);
-                    document.put("executionOrder", initialExOrder);
-                }
+            if (Objects.nonNull(document.get("hierarchy")) && Objects.nonNull(document.get("executionOrder")) && !document.getInteger("hierarchy").equals(0)) {
+                String hierarchy = String.valueOf(document.get("hierarchy"));
+                String execOrder = String.valueOf(document.get("executionOrder"));
+                int h = hierarchy.length();
+                int e = execOrder.length();
+                String exOrder = execOrder.substring(h, e - 1);
+                double initialExOrder = Double.parseDouble(exOrder);
+                document.put("executionOrder", initialExOrder);
+            }
         });
 
         List<Document> postOrderList;
@@ -295,31 +293,52 @@ public class FancyTreeUtil {
     }
 
 
-    private static TreeNode<Document> constructTree(List<Document> documentList, String rootId) {
+    private static TreeNode<Document> constructTree(List<Document> documentList, String rootId, String testCaseType) {
 
         Set<String> fancyTreeFolderSet = new HashSet(CommonConstants.fancyTreeFolderList);
         TreeNode<Document> root = new TreeNode<Document>(new Document());
+        List<String> listOfDuplicates = new ArrayList<>();
         {
-            documentList.forEach( (document) -> {
-                String docType = document.get("_id").toString().substring(0 , 3);
-                if(document.get("_id").equals(rootId) || Objects.isNull(document.get("parentId")))
-                {
+            documentList.forEach((document) -> {
+                String docType = document.get("_id").toString().substring(0, 3);
+                if (document.get("_id").equals(rootId) || Objects.isNull(document.get("parentId"))) {
                     root.addChild(document);
-                }
-                else
-                {
+                } else {
                     TreeNode<Document> parent = findDocumentParent(root, document);
-                    if(Objects.nonNull(parent))
-                    {
-                        parent.addChild(document);
+                    if (Objects.nonNull(parent)) {
                         String key = Objects.nonNull(parent.data.get("key")) ? parent.data.get("key").toString() : null;
-                        if(Objects.nonNull(key) && (key.startsWith("PRE_") || key.startsWith("POST_"))){
-                            parent.data.put("scriptCount",parent.children.size());
+                        if (document.get("_id").toString().startsWith("SCR") && !listOfDuplicates.contains(document.get("_id").toString())) {
+                            List<Document> listOfDocuments = documentList.stream().filter(o -> o.get("_id").toString().startsWith("SCR") &&
+                                    o.get("parentId").equals(document.get("parentId")) && o.get("name").equals(document.get("name")) &&
+                                    o.get("scriptType").equals(document.get("scriptType"))).collect(Collectors.toList());
+                            List<Map<String, String>> listOfMap = new ArrayList<>();
+                            String testDoc = Objects.nonNull(document.get("testCaseType")) ? document.get("testCaseType").toString() : CommonConstants.automation;
+                            boolean flag = false;
+                            if (Objects.nonNull(testCaseType) && testCaseType.equalsIgnoreCase(testDoc) && listOfDocuments.size() == 1 || Objects.isNull(testCaseType)) {
+                                flag = true;
+                            }
+                            if (flag) {
+                                listOfDocuments.stream().forEach(o -> {
+                                    Map<String, String> map = new HashMap<>();
+                                    String type = Objects.nonNull(o.get("testCaseType")) ? o.get("testCaseType").toString() : CommonConstants.automation;
+                                    if (Objects.nonNull(testCaseType) && testCaseType.equalsIgnoreCase(type) || Objects.isNull(testCaseType)) {
+                                        map.put("type", type);
+                                        map.put("id", o.get("_id").toString());
+                                        listOfMap.add(map);
+                                        listOfDuplicates.add(o.get("_id").toString());
+                                    }
+                                });
+                                document.put("testCaseType", listOfMap);
+                                parent.addChild(document);
+                            }
+                        } else if (!document.get("_id").toString().startsWith("SCR"))
+                            parent.addChild(document);
+                        if (Objects.nonNull(key) && (key.startsWith("PRE_") || key.startsWith("POST_"))) {
+                            parent.data.put("scriptCount", parent.children.size());
                         }
                     }
                 }
-                if(fancyTreeFolderSet.contains(docType))
-                {
+                if (fancyTreeFolderSet.contains(docType)) {
                     document.put("folder", true);
                     long moduleCount = documentList.stream().filter(doc -> !document.getString("_id").equals(doc.getString("_id")) && Objects.nonNull(doc.get("searchKey")) && doc.get("searchKey").toString().contains(document.get("_id").toString()) && Objects.isNull(doc.get("type"))).count();
                     document.put("subModuleCount", (int) moduleCount);
@@ -336,30 +355,23 @@ public class FancyTreeUtil {
         Map<String, String> keyMap = getCountKey(key);
         TreeNode<Document> root = new TreeNode<Document>(new Document());
         {
-            documentList.forEach( (document) -> {
-                if(document.get("_id").equals(rootId) || Objects.isNull(document.get("parentId")))
-                {
+            documentList.forEach((document) -> {
+                if (document.get("_id").equals(rootId) || Objects.isNull(document.get("parentId"))) {
                     root.addChild(document);
-                    String docType = document.get("_id").toString().substring(0 , 3);
-                    if(fancyTreeFolderSet.contains(docType))
-                    {
+                    String docType = document.get("_id").toString().substring(0, 3);
+                    if (fancyTreeFolderSet.contains(docType)) {
                         document.put("folder", true);
                         updateTreeCount(documentList, document, keyMap);
                     }
-                }
-                else
-                {
+                } else {
                     TreeNode<Document> parent = findDocumentParent(root, document);
-                    if(Objects.nonNull(parent))
-                    {
-                        String docType = document.get("_id").toString().substring(0 , 3);
-                        if(fancyTreeFolderSet.contains(docType))
-                        {
+                    if (Objects.nonNull(parent)) {
+                        String docType = document.get("_id").toString().substring(0, 3);
+                        if (fancyTreeFolderSet.contains(docType)) {
                             document.put("folder", true);
                             parent.addChild(document);
                             updateTreeCount(documentList, document, keyMap);
-                        }
-                        else {
+                        } else {
                             parent.addInnerChild(document);
                         }
                     }
@@ -373,43 +385,43 @@ public class FancyTreeUtil {
         long folderCount = documentList.stream().filter(doc -> !document.getString("_id").equals(doc.getString("_id")) && Objects.nonNull(doc.get("searchKey")) && doc.get("searchKey").toString().contains(document.get("_id").toString()) && doc.getBoolean("folder")).count();
         document.put(keyMap.get("folderKey"), (int) folderCount);
         long childCount = 0;
-        if(keyMap.get("childKey").equalsIgnoreCase("elementCount")){
+        if (keyMap.get("childKey").equalsIgnoreCase("elementCount")) {
             childCount = documentList.stream().filter(doc -> Objects.nonNull(doc.get("searchKey")) && doc.get("searchKey").toString().contains(document.get("_id").toString()) && !doc.getBoolean("folder") && (Objects.isNull(doc.get("isShared")) || !doc.get("isShared").toString().equals("Y"))).count();
-        } else{
+        } else {
             childCount = documentList.stream().filter(doc -> Objects.nonNull(doc.get("searchKey")) && doc.get("searchKey").toString().contains(document.get("_id").toString()) && !doc.getBoolean("folder")).count();
         }
         document.put(keyMap.get("childKey"), (int) childCount);
     }
 
-    private static Map<String, String> getCountKey(String key){
+    private static Map<String, String> getCountKey(String key) {
         Map<String, String> keyMap = new HashMap<>();
-        switch (key.toLowerCase()){
-            case "elements" :
-                keyMap.put("folderKey","subPageCount");
-                keyMap.put("childKey","elementCount");
+        switch (key.toLowerCase()) {
+            case "elements":
+                keyMap.put("folderKey", "subPageCount");
+                keyMap.put("childKey", "elementCount");
                 break;
-            case "scripts" :
-                keyMap.put("folderKey","subModuleCount");
-                keyMap.put("childKey","scriptCount");
+            case "scripts":
+                keyMap.put("folderKey", "subModuleCount");
+                keyMap.put("childKey", "scriptCount");
                 break;
-            case "programelements" :
-                keyMap.put("folderKey","subPackageCount");
-                keyMap.put("childKey","programElementCount");
+            case "programelements":
+                keyMap.put("folderKey", "subPackageCount");
+                keyMap.put("childKey", "programElementCount");
                 break;
-            case "stepgroups" :
-                keyMap.put("folderKey","subLibraryCount");
-                keyMap.put("childKey","stepGroupCount");
+            case "stepgroups":
+                keyMap.put("folderKey", "subLibraryCount");
+                keyMap.put("childKey", "stepGroupCount");
                 break;
-            case "files" :
+            case "files":
             default:
-                keyMap.put("folderKey","subFolderCount");
-                keyMap.put("childKey","fileCount");
+                keyMap.put("folderKey", "subFolderCount");
+                keyMap.put("childKey", "fileCount");
                 break;
         }
         return keyMap;
     }
 
-    private static TreeNode<Document>  findDocumentParent(TreeNode<Document> treeRoot, Document document) {
+    private static TreeNode<Document> findDocumentParent(TreeNode<Document> treeRoot, Document document) {
 
         Comparable<Document> searchCriteria = new Comparable<Document>() {
             @Override

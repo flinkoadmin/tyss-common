@@ -4,14 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>OPTIMIZE</artifactId>
-        <groupId>org.tyss.optimize</groupId>
-        <version>0.1.0-SNAPSHOT</version>
+        <groupId>com.testyantra.optimize</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-
-
-    
+    <groupId>com.testyantra.optimize</groupId>
     <artifactId>tyss-common</artifactId>
 
     <properties>
@@ -34,7 +32,7 @@
 
 <name>flinko</name>
     <description>
-        flinko tyss-nlp for end user
+        flinko tyss-common for end user
     </description>
   <url>https://github.com/flinkoadmin/tyss-nlp</url>
   
@@ -62,7 +60,7 @@
         <developerConnection>scm:git:ssh://github.com/flinkoadmin/tyss-common.git</developerConnection>
         <url>http://github.com/flinkoadmin/tyss-common/tree/main</url>
     </scm>
-  
+
 
     <dependencies>
         <dependency>
@@ -145,12 +143,6 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
-  <dependency>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.2.0</version>
-        <type>maven-plugin</type>
-  </dependency>
 
     </dependencies>
 

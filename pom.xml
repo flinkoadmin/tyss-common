@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.testyantra.optimize</groupId>
-    <artifactId>OPTIMIZE</artifactId>
+    <artifactId>tyss-common</artifactId>
   <version>1.0</version>
 
     <properties>

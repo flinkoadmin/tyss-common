@@ -3,11 +3,11 @@
     <parent>
         <artifactId>OPTIMIZE</artifactId>
         <groupId>com.testyantra.optimize</groupId>
+        <relativePath>../tyss-common/pom.xml</relativePath>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.testyantra.optimize</groupId>
+    <groupId>com.testyantra.tyss-common</groupId>
     <artifactId>tyss-common</artifactId>
   <version>1.0</version>
 

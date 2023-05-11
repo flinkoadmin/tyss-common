@@ -3,22 +3,39 @@ package com.tyss.optimize.common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class CommonUtil {
+
+    private static final String HH_MM = "HH:mm";
+    private static Map<String, List<String>> platformMap = new HashMap<>();
+
+    static {
+        platformMap.put(CommonConstants.Web, Arrays.asList(CommonConstants.Web, CommonConstants.WebAndMobile));
+        platformMap.put(CommonConstants.Android, Arrays.asList(CommonConstants.Android, CommonConstants.WebAndMobile));
+        platformMap.put(CommonConstants.iOS, Arrays.asList(CommonConstants.iOS, CommonConstants.WebAndMobile));
+    }
+
+    public static boolean isTypeMatched(String scriptType, String platform) {
+        if(platformMap.containsKey(platform)) {
+            return platformMap.get(platform).contains(scriptType);
+        }
+        return StringUtils.equalsIgnoreCase(platform, scriptType);
+    }
 
     public static String getCurrentTimestamp() {
         return Instant.now().toString();
@@ -36,7 +53,7 @@ public class CommonUtil {
                 String formattedDate = outputFormat.format(inputFormat.parse(date));
                 return formattedDate;
             } catch (DateTimeParseException dateTimeParseException) {
-                log.error("getFormattedDate Exception Date = " + date + " " + dateTimeParseException.getMessage());
+                log.debug("getFormattedDate Exception Date = {} {}",date,dateTimeParseException.getMessage());
             }
         }
         return date;
@@ -54,7 +71,7 @@ public class CommonUtil {
                 String formattedDate = outputFormat.format(inputFormat.parse(date));
                 return formattedDate;
             } catch (DateTimeParseException dateTimeParseException) {
-                log.error("getMongoFormattedDate Exception Date = " + date + " " + dateTimeParseException.getMessage());
+                log.error("getMongoFormattedDate Exception Date = {} {}",date, dateTimeParseException.getMessage());
             }
             return date;
         }
@@ -192,5 +209,59 @@ public class CommonUtil {
 
     }
 
+    public static String toVariableDateTime(String date) {
 
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy, HH:mm");
+        String formattedDate = "";
+        try {
+            formattedDate = outputFormat.format(inputFormat.parse(date));
+        } catch (DateTimeParseException dateTimeParseException) {
+            log.error("getFormattedDate yyy Exception Date = " + date + " " + dateTimeParseException.getMessage());
+        }
+        return formattedDate;
+
+    }
+
+
+    public static Date getDate(String dateString){
+        if(Objects.isNull(dateString) || dateString.equals(CommonConstants.DEFAULT_ICON)){
+            return null;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date = null;
+        try {
+            if(Objects.nonNull(dateString)){
+                date = simpleDateFormat.parse(dateString);
+            }
+        } catch (ParseException e) {
+            log.error("Exception in getDate = " + dateString + " " + e.getMessage());
+            date = convertToDate(dateString);
+        }
+        return date;
+    }
+
+    private static Date convertToDate(String dateString){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        String formattedDate = inputFormat.format(outputFormat.parse(dateString));
+        Date date = null;
+        try {
+            date = simpleDateFormat.parse(formattedDate);
+        } catch (ParseException e) {
+            log.error("Exception in convertToDate: " + dateString + " " + e.getMessage());
+        }
+        return date;
+    }
+
+    public static String getDate() {
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        Calendar cals = Calendar.getInstance();
+        return dateFormat.format(cals.getTime());
+    }
+    public static String getTime() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(HH_MM);
+        return dtf.format(LocalTime.now());
+    }
 }

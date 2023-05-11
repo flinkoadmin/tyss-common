@@ -6,8 +6,10 @@ import org.bson.Document;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
+
 @Slf4j
 public class SampleDocumentData {
+
 
     static StringBuilder fancyTreeBuilder = new StringBuilder();
 
@@ -21,35 +23,35 @@ public class SampleDocumentData {
         List<Document> elementPage1List = new ArrayList<>();
 
         Document eleDocument = new Document();
-        eleDocument.append("_id","ELE1001").append("name","element1");
+        eleDocument.append("_id", "ELE1001").append("name", "element1");
 
         Document eleDocument2 = new Document();
-        eleDocument2.append("_id","ELE1002").append("name","element2");
+        eleDocument2.append("_id", "ELE1002").append("name", "element2");
 
         elementPage1List.add(eleDocument);
         elementPage1List.add(eleDocument2);
 
         Document document = new Document();
-        document.append("_id","PAG1001").append("name","page1");
-        document.append("elements",elementPage1List);
+        document.append("_id", "PAG1001").append("name", "page1");
+        document.append("elements", elementPage1List);
         documentList.add(document);
 
         Document document2 = new Document();
-        document2.append("_id","PAG1002").append("name","page2");
+        document2.append("_id", "PAG1002").append("name", "page2");
         documentList.add(document2);
 
         Document document3 = new Document();
-        document3.append("_id","PAG1003").append("name","page3").append("parentPageId","PAG1001");
+        document3.append("_id", "PAG1003").append("name", "page3").append("parentPageId", "PAG1001");
         documentList.add(document3);
 
         Document document4 = new Document();
-        document4.append("_id","PAG1004").append("name","page4").append("parentPageId","PAG1001");
+        document4.append("_id", "PAG1004").append("name", "page4").append("parentPageId", "PAG1001");
         documentList.add(document4);
         Instant start = Instant.now();
 
-      //  buildFancyTree(documentList, "elements");
+        buildFancyTree(documentList, "elements");
 
-       String fancyTreeJson = FancyTreeUtil.buildFancyTree(documentList, "page4", "elements", false, null);
+        String fancyTreeJson = FancyTreeUtil.buildFancyTree(documentList, "page4", "elements", false, null, true, 50, 250);
         Instant finish = Instant.now();
 
         long timeElapsed = Duration.between(start, finish).toMillis();
@@ -57,7 +59,6 @@ public class SampleDocumentData {
         log.info(fancyTreeJson);
 
     }
-
 
     public static String buildFancyTree(List<Document> documentList, String key) {
 
@@ -68,10 +69,10 @@ public class SampleDocumentData {
         fancyTreeBuilder.append("]");
         String pageJson = fancyTreeBuilder.toString().replace("_id", "key").
                 replace("name", "title").
-                replace("},children",", \"children\"")
+                replace("},children", ", \"children\"")
                 .replace(",]", "]");
 
-    //    pageJson = pageJson.replace("elements", "children");
+        //    pageJson = pageJson.replace("elements", "children");
         return pageJson;
     }
 
@@ -79,13 +80,13 @@ public class SampleDocumentData {
 
         List<Document> keyDocumentList = new ArrayList();
 
-        documentList.forEach( (document) ->
+        documentList.forEach((document) ->
         {
-            if(Objects.nonNull(document.get(key))) {
+            if (Objects.nonNull(document.get(key))) {
                 List<Document> childDocs = (List<Document>) document.get(key);
                 childDocs.forEach((childDoc) ->
                 {
-                    childDoc.put("parentPageId",document.get("_id"));
+                    childDoc.put("parentPageId", document.get("_id"));
                     keyDocumentList.add(childDoc);
                 });
                 document.remove(key);
@@ -99,29 +100,23 @@ public class SampleDocumentData {
     private static TreeNode<Document> constructTree(List<Document> documentList) {
         TreeNode<Document> root = new TreeNode<Document>(new Document());
         {
-            documentList.forEach( (document) -> {
-              //  log.info(document.get("_id") + " " + document.get("parentPageId"));
-                if(Objects.isNull(document.get("parentPageId")))
-                {
+            documentList.forEach((document) -> {
+                //  log.info(document.get("_id") + " " + document.get("parentPageId"));
+                if (Objects.isNull(document.get("parentPageId"))) {
                     root.addChild(document);
-                }
-                else
-                {
+                } else {
                     TreeNode<Document> parent = findDocumentParent(root, document);
-                    if(Objects.nonNull(parent))
-                    {
+                    if (Objects.nonNull(parent)) {
                         parent.addChild(document);
 
                     }
                 }
-                String docType = document.get("_id").toString().substring(0 , 3);
-                if(fancyTreeFolderSet.contains(docType))
-                {
+                String docType = document.get("_id").toString().substring(0, 3);
+                if (fancyTreeFolderSet.contains(docType)) {
                     document.put("folder", true);
                 }
-                if(Objects.nonNull(document.get("elements")))
-                {
-                    document.put("children",document.get("elements"));
+                if (Objects.nonNull(document.get("elements"))) {
+                    document.put("children", document.get("elements"));
                     document.remove("elements");
                 }
             });
@@ -129,7 +124,7 @@ public class SampleDocumentData {
         return root;
     }
 
-    public static TreeNode<Document>  findDocumentParent(TreeNode<Document> treeRoot, Document document) {
+    public static TreeNode<Document> findDocumentParent(TreeNode<Document> treeRoot, Document document) {
 
         Comparable<Document> searchCriteria = new Comparable<Document>() {
             @Override
@@ -147,29 +142,27 @@ public class SampleDocumentData {
     }
 
 
-    public static void printFancyTree(TreeNode<Document>  documentParent) {
+    public static void printFancyTree(TreeNode<Document> documentParent) {
 
 //        fancyTreeBuilder.append(documentParent.data.toJson());
 //
 //        fancyTreeBuilder.append("children: [ ");
 
-       int count =  documentParent.children.size();
+        int count = documentParent.children.size();
 
-        for (int i = 0; i < count ; i++) {
+        for (int i = 0; i < count; i++) {
 
             TreeNode<Document> child = documentParent.children.get(i);
-           fancyTreeBuilder.append(child.data.toJson()).append(",");
+            fancyTreeBuilder.append(child.data.toJson()).append(",");
 
 
-            if(child.children.size() > 0)
-            {
+            if (child.children.size() > 0) {
 
                 fancyTreeBuilder.append("children: [ ");
                 printFancyTree(child);
-                if(i == count - 1) {
+                if (i == count - 1) {
                     fancyTreeBuilder.append("] ");
-                }else
-                {
+                } else {
                     fancyTreeBuilder.append("] }, ");
                 }
             }
@@ -197,7 +190,6 @@ public class SampleDocumentData {
     }
 
 
-
     private static String createIndent(int depth) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < depth; i++) {
@@ -205,7 +197,6 @@ public class SampleDocumentData {
         }
         return sb.toString();
     }
-
 
 
     public static TreeNode<String> getSet1() {
@@ -248,14 +239,14 @@ public class SampleDocumentData {
         return root;
     }
 
-    public  void oldmain(String[] args) {
+    public void oldmain(String[] args) {
 
         Document d1 = new Document();
-        d1.put("folder" , true);
+        d1.put("folder", true);
         d1.put("name", "login");
 
         Document d2 = new Document();
-        d2.put("folder" , true);
+        d2.put("folder", true);
         d2.put("name", "logout");
 
         Document d3 = new Document();
@@ -281,13 +272,10 @@ public class SampleDocumentData {
 
         dbList.forEach(document -> {
 
-            if(Objects.nonNull(document.get("folder")) && (Boolean) document.get("folder"))
-            {
+            if (Objects.nonNull(document.get("folder")) && (Boolean) document.get("folder")) {
                 treeList.add(document);
 
-            }
-            else
-            {
+            } else {
                 int itemIndex = getItemIndex(treeList);
                 treeList.add(itemIndex, document);
 
@@ -307,11 +295,10 @@ public class SampleDocumentData {
 
             Document document = abc.get(i);
 
-            if(Objects.nonNull(document.get("folder")) && (Boolean) document.get("folder"))
-            {
+            if (Objects.nonNull(document.get("folder")) && (Boolean) document.get("folder")) {
                 folderIndex = i;
             }
         }
-        return folderIndex -1;
+        return folderIndex - 1;
     }
 }

@@ -16,4 +16,8 @@ public class CommonMessages {
 
         return passwordWarnings.toString();
     }
+    
+    public static final String INVALID_STORAGE = "Invalid Storage";
+    public static final String INVALID_PARALLELRUNS_LIMIT = "Maximum number of parallelRuns can be 25 and storage can be 100 GB";
+    public static final String INVALID_PARALLELRUNS = "Invalid parallelRuns";
 }
